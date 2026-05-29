@@ -202,14 +202,14 @@ android {
 
 configurations.all {
   resolutionStrategy {
-    force("androidx.lifecycle:lifecycle-runtime:2.9.0")
-    force("androidx.lifecycle:lifecycle-runtime-ktx:2.9.0")
-    force("androidx.lifecycle:lifecycle-viewmodel:2.9.0")
-    force("androidx.lifecycle:lifecycle-viewmodel-ktx:2.9.0")
-    force("androidx.lifecycle:lifecycle-viewmodel-compose:2.9.0")
-    force("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.9.0")
-    force("androidx.lifecycle:lifecycle-common:2.9.0")
-    force("androidx.lifecycle:lifecycle-livedata-core:2.9.0")
+    force("androidx.lifecycle:lifecycle-runtime:2.10.0")
+    force("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
+    force("androidx.lifecycle:lifecycle-viewmodel:2.10.0")
+    force("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
+    force("androidx.lifecycle:lifecycle-viewmodel-compose:2.10.0")
+    force("androidx.lifecycle:lifecycle-viewmodel-savedstate:2.10.0")
+    force("androidx.lifecycle:lifecycle-common:2.10.0")
+    force("androidx.lifecycle:lifecycle-livedata-core:2.10.0")
   }
 }
 
