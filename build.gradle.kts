@@ -17,11 +17,11 @@ allprojects {
             // Cache changing modules for 24 hours
             cacheChangingModulesFor(24, "hours")
             // Force newer versions for common conflicts
-            force("androidx.lifecycle:lifecycle-viewmodel:2.8.7")
-            force("androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.7")
-            force("androidx.lifecycle:lifecycle-runtime:2.8.7")
-            force("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
-            force("androidx.lifecycle:lifecycle-livedata-core:2.8.7")
+            force("androidx.lifecycle:lifecycle-viewmodel:2.10.0")
+            force("androidx.lifecycle:lifecycle-viewmodel-ktx:2.10.0")
+            force("androidx.lifecycle:lifecycle-runtime:2.10.0")
+            force("androidx.lifecycle:lifecycle-runtime-ktx:2.10.0")
+            force("androidx.lifecycle:lifecycle-livedata-core:2.10.0")
         }
     }
 }
