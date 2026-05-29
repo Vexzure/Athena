@@ -1,5 +1,5 @@
 [versions]
-agp = "9.2.0"
+agp = "9.2.1"
 atomicfu = "0.32.1"
 billing = "8.3.0"
 biometric = "1.2.0-alpha05"
