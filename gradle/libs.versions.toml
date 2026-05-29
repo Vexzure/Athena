@@ -2,7 +2,7 @@
 agp = "9.2.0"
 atomicfu = "0.32.1"
 billing = "8.3.0"
-biometric = "1.2.0-alpha05"
+biometric = "1.4.0-alpha07"
 datastorePreferences = "1.2.1"
 dnsjava = "3.6.4"
 hilt = "2.59.2"
