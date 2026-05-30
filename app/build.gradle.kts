@@ -5,7 +5,8 @@ plugins {
   alias(libs.plugins.hilt)
   alias(libs.plugins.kotlin.parcelize)
   alias(libs.plugins.kotlin.serialization)
-  alias(libs.plugins.spotless)
+  alias(libs.plugins.ktlint)
+  alias(libs.plugins.detekt)
 }
 
 android {
@@ -273,22 +274,32 @@ dependencies {
   implementation(libs.shizuku.provider)
 }
 
-spotless {
-  kotlin {
-    target("**/*.kt")
-    targetExclude("**/build/**/*.kt")
-    // ktlint with strict rules - fix violations manually
-    ktlint("1.2.1")
-      .editorConfigOverride(
-        mapOf(
-          "ktlint_code_style" to "ktlint_official",
-          "ktlint_function_naming_ignore_when_annotated_with" to "Composable",
-          "max_line_length" to "120",
-        ),
-      )
+// Ktlint configuration
+ktlint {
+  version.set("1.2.1")
+  android.set(true)
+  ignoreFailures.set(false)
+  reporters {
+    reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.PLAIN)
+    reporter(org.jlleitschuh.gradle.ktlint.reporter.ReporterType.CHECKSTYLE)
   }
-  kotlinGradle {
-    target("*.gradle.kts")
-    ktlint("1.2.1")
+  filter {
+    exclude("**/generated/**")
+    exclude("**/build/**")
+  }
+}
+
+// Detekt configuration
+detekt {
+  buildUponDefaultConfig = true
+  allRules = false
+  config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
+}
+
+tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {
+  reports {
+    html.required.set(true)
+    xml.required.set(true)
+    txt.required.set(true)
   }
 }
