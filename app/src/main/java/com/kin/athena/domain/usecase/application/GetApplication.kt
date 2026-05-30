@@ -32,7 +32,9 @@ class GetApplication
         val application = packageRepository.getApplicationByID(packageId = applicationID)
         application?.let { Result.Success(application) }
           ?: run { Result.Failure(Error.ServerError("Application $applicationID was not found")) }
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(Error.ServerError("Error while retrieving packages"))
+      } catch (e: IllegalArgumentException) {
         Result.Failure(Error.ServerError(e.message ?: "Error while retrieving packages"))
       }
   }

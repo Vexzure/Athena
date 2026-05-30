@@ -99,7 +99,9 @@ fun ClearHostsSheet(
         val hostsManager = HostsManager(context, emptyList())
         hostsManager.revertToDefault()
         Logger.info("Debug: Successfully cleared hosts file")
-      } catch (e: Exception) {
+      } catch (e: java.io.IOException) {
+        Logger.error("Debug: Failed to clear hosts file: ${e.message}", e)
+      } catch (e: SecurityException) {
         Logger.error("Debug: Failed to clear hosts file: ${e.message}", e)
       }
       onExit()

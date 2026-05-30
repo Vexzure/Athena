@@ -82,11 +82,10 @@ sealed class ImportSource {
 }
 
 @HiltViewModel
+@Suppress("TooManyFunctions")
 class CustomBlocklistViewModel
   @Inject
-  constructor(
-    @ApplicationContext private val context: Context,
-  ) : ViewModel() {
+  constructor() : ViewModel() {
     private val httpClient =
       OkHttpClient
         .Builder()
@@ -175,7 +174,12 @@ class CustomBlocklistViewModel
         try {
           val result = withContext(Dispatchers.IO) { validateBlocklistUrl(url) }
           _validationState.value = result
-        } catch (e: Exception) {
+        } catch (e: java.io.IOException) {
+          _validationState.value =
+            BlocklistValidationState(
+              isValid = false,
+              errorMessage = "Validation failed: ${e.message}",
+        } catch (e: IllegalArgumentException) {
           _validationState.value =
             BlocklistValidationState(
               isValid = false,
@@ -234,7 +238,7 @@ class CustomBlocklistViewModel
         }
       } catch (e: IOException) {
         BlocklistValidationState(isValid = false, errorMessage = "Network error: ${e.message}")
-      } catch (e: Exception) {
+      } catch (e: IllegalArgumentException) {
         BlocklistValidationState(isValid = false, errorMessage = "Validation error: ${e.message}")
       }
     }
@@ -407,7 +411,9 @@ class CustomBlocklistViewModel
         urls.forEach { url ->
           try {
             validateBlocklistUrl(url)
-          } catch (e: Exception) {
+          } catch (e: java.io.IOException) {
+            // Log error but continue with other URLs
+          } catch (e: IllegalArgumentException) {
             // Log error but continue with other URLs
           }
         }
@@ -422,7 +428,12 @@ class CustomBlocklistViewModel
         try {
           val result = withContext(Dispatchers.IO) { validateBlocklistUrl(url) }
           callback(result)
-        } catch (e: Exception) {
+        } catch (e: java.io.IOException) {
+          callback(
+            BlocklistValidationState(
+              isValid = false,
+              errorMessage = "Preview failed: ${e.message}",
+        } catch (e: IllegalArgumentException) {
           callback(
             BlocklistValidationState(
               isValid = false,
@@ -486,7 +497,7 @@ class CustomBlocklistViewModel
           path.contains("social") -> "Social Media Blocking"
           else -> "Custom Blocklist"
         }
-      } catch (e: Exception) {
+      } catch (e: IllegalArgumentException) {
         "Custom Blocklist"
       }
 

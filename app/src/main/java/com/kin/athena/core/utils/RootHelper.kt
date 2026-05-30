@@ -18,6 +18,7 @@
 package com.kin.athena.core.utils
 
 import android.content.Context
+import com.kin.athena.core.logging.Logger
 import android.content.pm.PackageManager
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -90,8 +91,8 @@ fun getSystemProperty(propName: String): String? {
     val process = Runtime.getRuntime().exec("getprop $propName")
     val bufferedReader = process.inputStream.bufferedReader()
     return bufferedReader.readLine()
-  } catch (e: Exception) {
-    e.printStackTrace()
+  } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+    Logger.error("Error reading system property: ${e.message}", e)
   }
   return null
 }
@@ -115,7 +116,7 @@ suspend fun grantRootAccess(): Boolean =
     } catch (e: IOException) {
       e.printStackTrace()
       false
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       e.printStackTrace()
       false
     }
@@ -127,7 +128,7 @@ suspend fun isRootGranted(): Boolean =
       val process = Runtime.getRuntime().exec(arrayOf("su", "-c", "which su"))
       val exitCode = process.waitFor()
       exitCode == 0
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       false
     }
   }
@@ -140,7 +141,7 @@ fun runRootCommand(commands: String) {
     outputStream.writeBytes(commands)
     outputStream.writeBytes("exit\n")
     outputStream.flush()
-  } catch (e: Exception) {
-    e.printStackTrace()
+  } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+    Logger.error("Error setting SELinux to permissive: ${e.message}", e)
   }
 }

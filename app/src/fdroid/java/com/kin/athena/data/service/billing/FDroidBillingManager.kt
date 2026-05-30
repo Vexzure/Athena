@@ -80,7 +80,8 @@ class FDroidBillingManager
                   Logger.info("F-Droid: Discount text: $cachedDiscountText")
                 }
                 Logger.info(
-                  "F-Droid: Fetched price for $productId ($slug): ${priceResponse.formatted} (${priceResponse.currency})",
+                  "F-Droid: Fetched price for $productId ($slug): " +
+                    "${priceResponse.formatted} (${priceResponse.currency})",
                 )
               },
               ifFailure = { error ->

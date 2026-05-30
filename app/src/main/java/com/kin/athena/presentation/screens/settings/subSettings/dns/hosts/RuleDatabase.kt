@@ -31,6 +31,7 @@ class RuleDatabase {
     private const val NO_ROUTE = "0.0.0.0"
 
     @Deprecated("Use BlocklistParser.parseLine() instead")
+    @Suppress("ReturnCount")
     fun parseLine(line: String): String? {
       if (line.isEmpty() || line.isBlank()) {
         return null
@@ -87,6 +88,7 @@ class RuleDatabase {
   private val regexRules = mutableListOf<BlocklistRule.RegexPattern>()
   private val whitelistedHosts = mutableSetOf<String>()
 
+  @Suppress("ReturnCount")
   fun isBlocked(host: String): Boolean {
     val lowerHost = host.lowercase()
 
@@ -167,11 +169,11 @@ class RuleDatabase {
         "(${newHosts.size} domains, ${wildcardRules.size} wildcards, " +
         "${regexRules.size} regex, ${whitelistedHosts.size} whitelisted)",
     )
-    Runtime.getRuntime().gc()
     return null
   }
 
   @Throws(InterruptedException::class)
+  @Suppress("ReturnCount")
   private fun loadItem(
     set: MutableIntSet,
     item: HostFile,
@@ -246,7 +248,9 @@ class RuleDatabase {
   }
 
   @Throws(InterruptedException::class)
-  private fun loadReader(
+  @Suppress("NestedBlockDepth")
+  private fun
+      loadReader(
     set: MutableIntSet,
     item: Host,
     reader: Reader,

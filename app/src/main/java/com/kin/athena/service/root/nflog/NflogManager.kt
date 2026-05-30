@@ -174,7 +174,7 @@ class NflogManager
           ?.get(1)
           ?.value
           ?.toIntOrNull()
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         null
       }
 
@@ -216,7 +216,7 @@ class NflogManager
             )
 
           saveLog(log)
-        } catch (e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
           Logger.error("Error extracting packet $outputLine ${e.stackTraceToString()}")
         }
       }

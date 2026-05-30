@@ -35,7 +35,7 @@ suspend fun String.resolveIpToHostname(): String? =
       } else {
         address.hostName
       }
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       null
     }
   }

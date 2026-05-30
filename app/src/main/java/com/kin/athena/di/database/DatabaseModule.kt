@@ -32,9 +32,11 @@ import javax.inject.Singleton
 object DatabaseModule {
   @Provides
   @Singleton
-  fun provideCustomDomainDao(databaseProvider: DatabaseProvider): CustomDomainDao = databaseProvider.instance().customDomainDao()
+  fun provideCustomDomainDao(databaseProvider: DatabaseProvider): CustomDomainDao =
+    databaseProvider.instance().customDomainDao()
 
   @Provides
   @Singleton
-  fun provideCustomDomainRepository(customDomainDao: CustomDomainDao): CustomDomainRepository = CustomDomainRepositoryImpl(customDomainDao)
+  fun provideCustomDomainRepository(customDomainDao: CustomDomainDao): CustomDomainRepository =
+    CustomDomainRepositoryImpl(customDomainDao)
 }

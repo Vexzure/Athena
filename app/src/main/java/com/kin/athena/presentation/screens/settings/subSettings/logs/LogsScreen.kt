@@ -513,6 +513,6 @@ fun extractBaseDomain(fullDomain: String): String =
     } else {
       host
     }
-  } catch (e: Exception) {
+  } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
     fullDomain
   }

@@ -90,7 +90,7 @@ class LogRule
               )
             try {
               logUseCases.addLog.execute(log)
-            } catch (e: Exception) {
+            } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
               Logger.error("Failed to add log: ${e.message}")
             }
           }

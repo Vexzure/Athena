@@ -32,7 +32,9 @@ class SavePreferences
       try {
         settingsRepository.saveSettings(settings)
         Result.Success(Unit)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(Error.ServerError("Error while saving preferences"))
+      } catch (e: IllegalArgumentException) {
         Result.Failure(Error.ServerError(e.message ?: "Error while saving preferences"))
       }
   }

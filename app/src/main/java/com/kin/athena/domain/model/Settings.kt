@@ -67,7 +67,7 @@ data class Settings(
   // Notifications
   val sendNotificationOnInstall: Boolean = false,
   // Nflog
-  val PID: Int = 0,
+  val pid: Int = 0,
   // DNS Blocking
   val malwareProtection: Boolean = false,
   val adBlocker: Boolean = false,

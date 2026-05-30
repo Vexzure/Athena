@@ -32,7 +32,11 @@ class AddApplications
       try {
         packageRepository.insertApplications(applications)
         Result.Success(Unit)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(
+          Error.ServerError("Error while adding ${applications.size} packages"),
+        )
+      } catch (e: IllegalArgumentException) {
         Result.Failure(
           Error.ServerError(e.message ?: "Error while adding ${applications.size} packages"),
         )

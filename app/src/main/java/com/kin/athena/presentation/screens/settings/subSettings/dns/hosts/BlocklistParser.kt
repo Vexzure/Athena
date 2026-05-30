@@ -48,10 +48,6 @@ sealed class BlocklistRule {
  * - Regex patterns (/pattern/)
  */
 object BlocklistParser {
-  private const val IPV4_LOOPBACK = "127.0.0.1"
-  private const val IPV6_LOOPBACK = "::1"
-  private const val NO_ROUTE = "0.0.0.0"
-
   /**
    * Parse a single line from a blocklist file Returns a BlocklistRule if the line is valid, null
    * otherwise
@@ -152,6 +148,7 @@ object BlocklistParser {
    * - address=/ads.example.com/127.0.0.1
    * - address=/ads.example.com/::
    */
+  @Suppress("ReturnCount")
   private fun parseDNSmasqFormat(line: String): BlocklistRule? {
     if (!line.startsWith("address=/")) {
       return null
@@ -201,7 +198,7 @@ object BlocklistParser {
     return try {
       val regex = Regex(pattern, RegexOption.IGNORE_CASE)
       BlocklistRule.RegexPattern(pattern, regex)
-    } catch (e: Exception) {
+    } catch (e: java.util.regex.PatternSyntaxException) {
       Logger.error("Invalid regex pattern: $pattern", e)
       null
     }
@@ -230,7 +227,7 @@ object BlocklistParser {
     return try {
       val regex = Regex(cleanLine, RegexOption.IGNORE_CASE)
       BlocklistRule.RegexPattern(cleanLine, regex)
-    } catch (e: Exception) {
+    } catch (e: java.util.regex.PatternSyntaxException) {
       // Not a valid regex pattern, let other parsers try
       null
     }
@@ -270,6 +267,7 @@ object BlocklistParser {
    * - ::1 tracker.example.com
    * - example.com (plain domain)
    */
+  @Suppress("ReturnCount")
   private fun parseHostsFormat(line: String): BlocklistRule? {
     val commentIndex = line.indexOf('#')
     var cleanLine =
@@ -335,6 +333,7 @@ object BlocklistParser {
   }
 
   /** Check if a domain is valid (strict validation for specific formats) */
+  @Suppress("ReturnCount")
   private fun isValidDomain(domain: String): Boolean {
     if (domain.isEmpty() || domain.length > 253) {
       return false
@@ -375,6 +374,7 @@ object BlocklistParser {
    * Check if a domain or pattern is valid (more lenient for plain domain lists) This allows domains
    * without strict validation for blocklists that may have unusual but valid domain patterns
    */
+  @Suppress("ReturnCount")
   private fun isValidDomainOrPattern(domain: String): Boolean {
     val len = domain.length
     if (len == 0 || len > 253) {

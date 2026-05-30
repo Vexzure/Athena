@@ -100,7 +100,9 @@ class CustomDomainRepositoryImpl
 
     override suspend fun getBlocklistCount(): Int = customDomainDao.getDomainCountByType(isAllowlist = false)
 
-    override suspend fun getEnabledAllowlistCount(): Int = customDomainDao.getEnabledDomainCountByType(isAllowlist = true)
+    override suspend fun getEnabledAllowlistCount(): Int =
+      customDomainDao.getEnabledDomainCountByType(isAllowlist = true)
 
-    override suspend fun getEnabledBlocklistCount(): Int = customDomainDao.getEnabledDomainCountByType(isAllowlist = false)
+    override suspend fun getEnabledBlocklistCount(): Int =
+      customDomainDao.getEnabledDomainCountByType(isAllowlist = false)
   }

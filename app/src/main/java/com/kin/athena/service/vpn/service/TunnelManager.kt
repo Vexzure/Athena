@@ -36,7 +36,6 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 class TunnelManager(
-  private val ruleHandler: RuleHandler? = null,
   private val dnsServerV4: String = "9.9.9.9",
   private val dnsServerV6: String = "2620:fe::fe",
 ) {
@@ -110,173 +109,11 @@ class TunnelManager(
         }
       } catch (e: UnsatisfiedLinkError) {
         Logger.error("Native library unavailable for clearSessions: ${e.message}")
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Error in clearSessions: ${e.message}", e)
       }
     }
   }
-
-  private fun onTcpPacketReceived(
-    data: ByteArray,
-    length: Int,
-    direction: String,
-  ): Boolean {
-    return try {
-      val buffer = ByteBuffer.wrap(data, 0, length)
-      buffer.order(ByteOrder.BIG_ENDIAN)
-
-      // Check IP version - first 4 bits
-      val firstByte = buffer.get(0).toInt() and 0xFF
-      val ipVersion = (firstByte shr 4) and 0xF
-
-      if (ipVersion == 6) {
-        // IPv6 packets - currently not supported for TCP filtering
-        Log.d("PacketFilter", "[$direction] IPv6 TCP packet detected, allowing (not implemented)")
-        return true
-      } else if (ipVersion != 4) {
-        Log.w("PacketFilter", "[$direction] Unknown IP version $ipVersion, blocking")
-        return false
-      }
-
-      val ipHeader = buffer.toIPv4Header()
-      val tcpHeader = TCPHeader.fromByteBuffer(buffer.slice())
-
-      // Use existing firewall filtering logic
-      ruleHandler?.let { ruleHandler ->
-        val isSynPacket =
-          tcpHeader.flags.contains(com.kin.athena.service.vpn.network.transport.tcp.TCPFlag.SYN) &&
-            !tcpHeader.flags.contains(com.kin.athena.service.vpn.network.transport.tcp.TCPFlag.ACK)
-        val filterResult =
-          filterPacket(tcpHeader, ipHeader, ruleHandler, bypassCheck = !isSynPacket)
-
-        val allowed = filterResult.first
-
-        allowed
-      }
-        ?: run {
-          Log.d("PacketFilter", "[$direction] TCP: No RuleHandler, allowing packet")
-          true // Allow if no rule handler
-        }
-    } catch (e: Exception) {
-      // For malformed packets (like Data Offset 0), block them for security
-      if (e.message?.contains("Malformed TCP packet") == true) {
-        // Log full packet data for debugging
-        val packetHex = data.take(minOf(length, 100)).joinToString(" ") { "%02x".format(it) }
-        Log.d("PacketFilter", "[$direction] TCP: Blocking malformed packet: ${e.message}")
-        Log.d("PacketFilter", "[$direction] TCP: Full packet hex (first 100 bytes): $packetHex")
-        false // Block malformed packets
-      } else {
-        Log.e("PacketFilter", "Error filtering TCP packet: ${e.message}")
-        true // Allow packet if other parsing errors occur
-      }
-    }
-  }
-
-  private fun onUdpPacketReceived(
-    data: ByteArray,
-    length: Int,
-    direction: String,
-  ): Boolean =
-    try {
-      val buffer = ByteBuffer.wrap(data, 0, length)
-      buffer.order(ByteOrder.BIG_ENDIAN)
-
-      val ipHeader = buffer.toIPv4Header()
-      val udpStartPosition = buffer.position()
-      val udpHeaderBuffer = buffer.slice()
-      val udpHeader = udpHeaderBuffer.toUDPHeader()
-
-      // Use existing firewall filtering logic
-      ruleHandler?.let { ruleHandler ->
-        val isDnsPacket = udpHeader.destinationPort == 53
-        val dnsModel: DNSModel? =
-          if (isDnsPacket) {
-            try {
-              val udpData = udpHeader.extractUDPData(udpHeaderBuffer)
-              ByteBuffer.wrap(udpData).toDNSModel()
-            } catch (e: Exception) {
-              Log.w("PacketFilter", "Failed to parse DNS model: ${e.message}")
-              null
-            }
-          } else {
-            null
-          }
-
-        val filterResult = filterPacket(udpHeader, ipHeader, ruleHandler, dnsModel)
-        val allowed = filterResult.first
-        val firewallResult = filterResult.third
-
-        // Handle DNS blocking with SOAR response
-        if (isDnsPacket && firewallResult == FirewallResult.DNS_BLOCKED) {
-          try {
-            // Create a buffer with UDP header and data for soarResponse
-            val udpPacketData = ByteBuffer.wrap(data, udpStartPosition, length - udpStartPosition)
-            udpPacketData.order(ByteOrder.BIG_ENDIAN)
-
-            Log.d(
-              "PacketFilter",
-              "[$direction] DNS: Creating SOAR response for blocked domain, " +
-                "UDP data size: ${udpPacketData.remaining()}",
-            )
-            val soarResponsePayload = soarResponse(udpPacketData, ipHeader)
-            Log.d(
-              "PacketFilter",
-              "[$direction] DNS: SOAR response payload created, size: ${soarResponsePayload.size}",
-            )
-
-            // Create complete response packet using Kotlin packet creation system
-            val completeResponsePacket = handleDnsResponse(udpHeader, ipHeader, soarResponsePayload)
-            Log.d(
-              "PacketFilter",
-              "[$direction] DNS: Complete response packet created, size: ${completeResponsePacket.size}",
-            )
-
-            // Send complete packet through VPN interface
-            if (contextPtr != 0L) {
-              jni_send_complete_packet(contextPtr, completeResponsePacket)
-            }
-
-            Log.d("PacketFilter", "[$direction] DNS: Sent SOAR response for blocked domain")
-            false // Block original packet
-          } catch (e: Exception) {
-            Log.e("PacketFilter", "Error creating/sending SOAR response: ${e.message}", e)
-            false // Block packet on error
-          }
-        } else {
-          allowed
-        }
-      } ?: run { true }
-    } catch (e: Exception) {
-      true
-    }
-
-  private fun onIcmpPacketReceived(
-    data: ByteArray,
-    length: Int,
-    direction: String,
-  ): Boolean =
-    try {
-      val buffer = ByteBuffer.wrap(data, 0, length)
-      buffer.order(ByteOrder.BIG_ENDIAN)
-
-      val ipHeader = buffer.toIPv4Header()
-      val icmpPacket = buffer.slice().toICMPPacket()
-
-      ruleHandler?.let { ruleHandler ->
-        val filterResult = filterPacket(icmpPacket, ipHeader, ruleHandler)
-
-        val allowed = filterResult.first
-
-        allowed
-      }
-        ?: run {
-          Log.d("PacketFilter", "[$direction] ICMP: No RuleHandler, allowing packet")
-          true
-        }
-    } catch (e: Exception) {
-      Log.e("PacketFilter", "Error filtering ICMP packet: ${e.message}")
-      true
-    }
 
   fun release() {
     synchronized(lock) {
@@ -289,7 +126,7 @@ class TunnelManager(
             done()
           } catch (e: UnsatisfiedLinkError) {
             Logger.error("Native library unavailable during release: ${e.message}")
-          } catch (e: Exception) {
+          } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
             Logger.error("Error during TunnelManager release: ${e.message}", e)
           } finally {
             contextPtr = 0L
@@ -302,13 +139,16 @@ class TunnelManager(
     }
   }
 
+  @Suppress("FunctionNaming")
   private external fun jni_init(sdk: Int): Long
 
+  @Suppress("FunctionNaming")
   private external fun jni_start(
     context: Long,
     loglevel: Int,
   )
 
+  @Suppress("FunctionNaming")
   private external fun jni_run(
     context: Long,
     tun: Int,
@@ -316,25 +156,26 @@ class TunnelManager(
     rcode: Int,
   )
 
+  @Suppress("FunctionNaming")
   private external fun jni_stop(context: Long)
 
+  @Suppress("FunctionNaming")
   private external fun jni_done(context: Long)
 
+  @Suppress("FunctionNaming")
   private external fun jni_getprop(name: String): String
 
+  @Suppress("FunctionNaming")
   private external fun jni_get_mtu(): Int
 
+  @Suppress("FunctionNaming")
   private external fun jni_clear_sessions(context: Long)
 
+  @Suppress("FunctionNaming")
   private external fun jni_set_dns_servers(
     context: Long,
     dnsV4: String,
     dnsV6: String,
-  )
-
-  private external fun jni_send_complete_packet(
-    context: Long,
-    packetData: ByteArray,
   )
 
   companion object {

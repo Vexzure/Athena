@@ -31,7 +31,9 @@ class GetApplications
       try {
         val packages = packageRepository.getAllApplications()
         Result.Success(packages)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(Error.ServerError("Error while retrieving packages"))
+      } catch (e: IllegalArgumentException) {
         Result.Failure(Error.ServerError(e.message ?: "Error while retrieving packages"))
       }
   }

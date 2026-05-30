@@ -180,6 +180,7 @@ sealed class TCPOption {
   }
 
   companion object {
+    @Suppress("ThrowsCount")
     fun parse(buffer: ByteBuffer): TCPOption {
       if (!buffer.hasRemaining()) {
         throw IllegalArgumentException("Buffer underflow: cannot read option kind.")
@@ -387,6 +388,7 @@ data class TCPHeader(
     }
 
     @Synchronized
+    @Suppress("ThrowsCount")
     fun fromByteBuffer(buffer: ByteBuffer): TCPHeader {
       val originalPosition = buffer.position()
       if (buffer.remaining() < TcpConstants.MIN_HEADER_LENGTH_BYTES) {

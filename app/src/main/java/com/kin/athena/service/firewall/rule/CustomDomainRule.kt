@@ -121,7 +121,7 @@ class CustomDomainRule
         try {
           val regex = Regex(customDomain.domain, RegexOption.IGNORE_CASE)
           regex.matches(domainName)
-        } catch (e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
           Logger.error("Invalid regex pattern in custom domain: ${customDomain.domain}", e)
           false
         }

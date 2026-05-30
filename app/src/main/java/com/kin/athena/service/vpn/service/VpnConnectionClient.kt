@@ -86,7 +86,7 @@ class VpnConnectionClient : VpnService() {
         domainCacheService.initializeGlobally()
 
         configureAndStartVpn()
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Error starting VPN", e)
         onDestroy()
       }
@@ -134,7 +134,7 @@ class VpnConnectionClient : VpnService() {
                   try {
                     addDisallowedApplication(app.packageID)
                     Logger.info("VPN: Bypassing VPN for ${app.packageID}")
-                  } catch (e: Exception) {
+                  } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                     Logger.error("VPN: Failed to bypass VPN for ${app.packageID}: ${e.message}")
                   }
                 }
@@ -175,7 +175,7 @@ class VpnConnectionClient : VpnService() {
     try {
       val intent = createServiceIntent(fd, NetworkConstants.ACTION_STOP_VPN)
       stopService(intent)
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Failed to stop VPN service: ${e.message}", e)
     }
   }

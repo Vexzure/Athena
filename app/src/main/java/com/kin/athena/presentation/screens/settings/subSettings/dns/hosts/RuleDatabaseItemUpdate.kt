@@ -108,7 +108,7 @@ class RuleDatabaseItemUpdate(
     } catch (e: IOException) {
       Logger.error("${item.title}: Download failed - ${e.message}", e)
       worker.addError(item, context.getString(R.string.rule_unknown_error) + e.toString())
-    } catch (e: NullPointerException) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: NullPointerException) {
       Logger.error("${item.title}: Unexpected null pointer", e)
       worker.addError(item, context.getString(R.string.rule_unknown_error) + e.toString())
     } finally {

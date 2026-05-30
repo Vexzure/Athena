@@ -34,7 +34,13 @@ class UpdatePinnedStatus
       try {
         packageRepository.updatePinnedStatus(packageId, isPinned)
         Result.Success(Unit)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(
+          Error.ServerError(
+            "Error while updating pinned status for package $packageId",
+          ),
+        )
+      } catch (e: IllegalArgumentException) {
         Result.Failure(
           Error.ServerError(
             e.message ?: "Error while updating pinned status for package $packageId",

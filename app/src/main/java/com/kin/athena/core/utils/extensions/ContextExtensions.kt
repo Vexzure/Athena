@@ -34,7 +34,8 @@ import com.kin.athena.core.logging.Logger
 val Context.notificationManagerCompat
   get() = NotificationManagerCompat.from(this)
 
-fun Context.doIfNotificationsAllowed(block: NotificationManagerCompat.() -> Unit) = if (hasNotificationsPermission()) block(notificationManagerCompat) else Unit
+fun Context.doIfNotificationsAllowed(block: NotificationManagerCompat.() -> Unit) =
+  if (hasNotificationsPermission()) block(notificationManagerCompat) else Unit
 
 @SuppressLint("InlinedApi")
 fun Context.hasNotificationsPermission() =

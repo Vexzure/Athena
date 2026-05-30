@@ -340,7 +340,7 @@ private fun RootPermissionRequest(
         } else {
           onPermissionDenied()
         }
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Root permission request failed: ${e.message}")
         onPermissionDenied()
       }

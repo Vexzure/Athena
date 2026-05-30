@@ -71,7 +71,7 @@ class BootStartWorker
               Result.failure()
             },
           )
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Error in boot start worker: ${e.message}")
         Result.failure()
       }

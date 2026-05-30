@@ -103,7 +103,7 @@ class Shell
         stdin = StandardInputStream(process.outputStream)
         stdoutReader = StreamReader.createAndStart(THREAD_NAME_STDOUT, process.inputStream)
         stderrReader = StreamReader.createAndStart(THREAD_NAME_STDERR, process.errorStream)
-      } catch (cause: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") cause: Exception) {
         throw NotFoundException(String.format(EXCEPTION_SHELL_CANNOT_OPEN, path), cause)
       }
     }
@@ -405,6 +405,7 @@ class Shell
           )
 
         companion object {
+          @Suppress("LongParameterList")
           internal fun create(
             uuid: UUID,
             command: String,
@@ -431,6 +432,7 @@ class Shell
        * @property notify True to notify any [OnLineListener] and [OnCommandResultListener] of the
        *   command.
        */
+      @Suppress("LongParameterList")
       class Config
         private constructor(
           val uuid: UUID = UUID.randomUUID(),

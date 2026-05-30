@@ -45,7 +45,7 @@ class AppRule
       observePackages(updatedApplication = null)
     }
 
-    fun observePackages(updatedApplication: Application?) {
+    fun observePackages(@Suppress("UnusedParameter") updatedApplication: Application?) {
       CoroutineScope(Dispatchers.IO).launch {
         val packagesList = applicationUseCases.getApplications.execute()
         packagesList.fold(

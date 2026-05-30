@@ -59,7 +59,10 @@ class HostsManager(
         Logger.info("HostsManager: Partition remounted as read-only")
         verifyUpdate()
         Logger.info("HostsManager: Hosts file update verified successfully")
-      } catch (e: Exception) {
+      } catch (e: java.io.IOException) {
+        Logger.error("HostsManager: Exception during apply: ${e.message}", e)
+        throw HostsException("Failed to apply hosts file: ${e.message}", e)
+      } catch (e: SecurityException) {
         Logger.error("HostsManager: Exception during apply: ${e.message}", e)
         throw HostsException("Failed to apply hosts file: ${e.message}", e)
       }
@@ -69,6 +72,7 @@ class HostsManager(
   }
 
   @Throws(HostsException::class)
+  @Suppress("ThrowsCount")
   fun revertToDefault() {
     if (isHostsWritable().first) {
       try {
@@ -84,7 +88,9 @@ class HostsManager(
         remountPartitionReadOnly()
         verifyRevert()
         Logger.info("Hosts file reverted to default version")
-      } catch (e: Exception) {
+      } catch (e: java.io.IOException) {
+        throw HostsException("Failed to revert hosts file: ${e.message}", e)
+      } catch (e: SecurityException) {
         throw HostsException("Failed to revert hosts file: ${e.message}", e)
       }
     } else {

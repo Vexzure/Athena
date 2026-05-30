@@ -45,7 +45,7 @@ fun isLocalIPv4(ip: String): Boolean {
       octets[0] == 127 -> true
       else -> false
     }
-  } catch (e: Exception) {
+  } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
     return false
   }
 }
@@ -91,7 +91,7 @@ class ConnectivityUtils
         try {
           val uid = getUidForConnectionOldMethod(packet)
           return uid
-        } catch (e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
           INVALID_UID
         }
       } catch (e: IllegalAccessException) {
@@ -99,7 +99,7 @@ class ConnectivityUtils
         INVALID_UID
       } catch (e: InvocationTargetException) {
         INVALID_UID
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Unexpected error: ${e.message}")
         INVALID_UID
       }

@@ -32,7 +32,9 @@ class LoadPreferences
       try {
         val settings = settingsRepository.loadSettings()
         Result.Success(settings)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(Error.ServerError("Error while loading preferences"))
+      } catch (e: IllegalArgumentException) {
         Result.Failure(Error.ServerError(e.message ?: "Error while loading preferences"))
       }
   }

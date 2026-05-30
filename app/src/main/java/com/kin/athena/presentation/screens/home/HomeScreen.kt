@@ -335,7 +335,7 @@ fun HomeScreen(
 private fun HomeScreenContent(
   settingsViewModel: SettingsViewModel,
   homeViewModel: HomeViewModel,
-  context: Context,
+  @Suppress("UnusedParameter") context: Context,
   onApplicationClicked: (String) -> Unit,
 ) {
   val applicationState = homeViewModel.applicationState.value
@@ -789,7 +789,7 @@ private fun HandleComprehensivePermissions(
 @Composable
 private fun MaterialYouProgressDialog(
   progress: Float,
-  onDismiss: () -> Unit,
+  @Suppress("UnusedParameter") onDismiss: () -> Unit,
 ) {
   Surface(
     modifier = Modifier.fillMaxSize(),
@@ -923,7 +923,7 @@ private fun CustomSettingsBox(
   title: String,
   description: String,
   icon: IconType,
-  actionType: SettingType,
+  @Suppress("UnusedParameter") actionType: SettingType,
   circleWrapperColor: Color,
   circleWrapperSize: androidx.compose.ui.unit.Dp,
   customButton: @Composable () -> Unit,
@@ -933,7 +933,6 @@ private fun CustomSettingsBox(
   isPinned: Boolean = false,
 ) {
   val context = LocalContext.current
-  var showCustomAction by remember { mutableStateOf(false) }
 
   androidx.compose.foundation.layout.Box(
     modifier =

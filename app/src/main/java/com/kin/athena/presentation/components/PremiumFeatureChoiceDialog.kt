@@ -60,7 +60,6 @@ fun PremiumFeatureChoiceDialog(
   onDismiss: () -> Unit,
 ) {
   val sheetState = rememberModalBottomSheetState()
-  val scope = rememberCoroutineScope()
 
   ModalBottomSheet(
     onDismissRequest = onDismiss,

@@ -75,7 +75,7 @@ class DnsQuickSettingsTile : TileService() {
 
       // Update tile state after action
       updateTileState()
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Quick Settings tile error: ${e.message}", e)
       showToast(getString(R.string.error_dns_toggle_failed))
     }
@@ -121,7 +121,7 @@ class DnsQuickSettingsTile : TileService() {
       }
 
       tile.updateTile()
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Error updating tile state: ${e.message}", e)
 
       // Fallback state
@@ -149,7 +149,7 @@ class DnsQuickSettingsTile : TileService() {
 
       Logger.debug("VPN Status - service running: $serviceRunning")
       serviceRunning
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Error checking VPN status: ${e.message}", e)
       false
     }
@@ -160,7 +160,7 @@ class DnsQuickSettingsTile : TileService() {
       if (launchIntent != null) {
         startActivityAndCollapse(launchIntent)
       }
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Error opening app: ${e.message}", e)
     }
   }
@@ -170,7 +170,7 @@ class DnsQuickSettingsTile : TileService() {
       android.widget.Toast
         .makeText(applicationContext, message, android.widget.Toast.LENGTH_SHORT)
         .show()
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Error showing toast: ${e.message}", e)
     }
   }

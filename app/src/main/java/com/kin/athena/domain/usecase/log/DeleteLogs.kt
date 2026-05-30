@@ -31,7 +31,9 @@ class DeleteLogs
       try {
         logRepository.deleteLogs()
         Result.Success(Unit)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(Error.ServerError("Error while deleting log"))
+      } catch (e: IllegalArgumentException) {
         Result.Failure(Error.ServerError(e.message ?: "Error while deleting log"))
       }
   }

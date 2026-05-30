@@ -32,6 +32,7 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import com.kin.athena.presentation.screens.settings.viewModel.SettingsViewModel
 
+@Suppress("ReturnCount")
 private fun getColorScheme(
   context: Context,
   isDarkTheme: Boolean,

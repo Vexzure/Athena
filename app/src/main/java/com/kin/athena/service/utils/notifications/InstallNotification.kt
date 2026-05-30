@@ -98,7 +98,7 @@ private fun Service.createApplication(
       cellularAccess = settings.cellularDefault,
       systemApp = info.flags and ApplicationInfo.FLAG_SYSTEM != 0,
     )
-  } catch (e: Exception) {
+  } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
     Logger.error("Failed to get application info for package $packageName: ${e.message}", e)
     null
   }

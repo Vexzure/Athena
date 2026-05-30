@@ -70,7 +70,9 @@ class GetFilteredApplications
             hasMore = hasMore,
           ),
         )
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(Error.ServerError("Error while retrieving filtered packages"))
+      } catch (e: IllegalArgumentException) {
         Result.Failure(Error.ServerError(e.message ?: "Error while retrieving filtered packages"))
       }
   }

@@ -24,7 +24,7 @@ object ShizukuUtils {
   fun isShizukuAvailable(): Boolean =
     try {
       Shizuku.pingBinder()
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       false
     }
 
@@ -35,7 +35,7 @@ object ShizukuUtils {
       } else {
         false
       }
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       false
     }
 
@@ -74,7 +74,7 @@ object ShizukuUtils {
           onPermissionGranted?.invoke()
         }
       }
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Failed to request Shizuku permission: ${e.message}")
     }
   }

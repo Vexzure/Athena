@@ -90,7 +90,9 @@ class PackageLoader(
               val displayName =
                 try {
                   packageManager.getApplicationLabel(appInfo).toString()
-                } catch (e: Exception) {
+                } catch (e: android.content.pm.PackageManager.NameNotFoundException) {
+                  appInfo.packageName
+                } catch (e: SecurityException) {
                   appInfo.packageName
                 }
 
@@ -101,7 +103,7 @@ class PackageLoader(
                     android.Manifest.permission.INTERNET,
                     appInfo.packageName,
                   ) == android.content.pm.PackageManager.PERMISSION_GRANTED
-                } catch (e: Exception) {
+                } catch (e: SecurityException) {
                   true // Default to true for safety
                 }
 
@@ -139,7 +141,7 @@ class PackageLoader(
         updateGmsStatus()
 
         Result.Success(Unit)
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Error while loading packages: ${e.message}")
         Result.Failure(Error.ServerError(e.message ?: "Error while loading packages"))
       }
@@ -173,7 +175,7 @@ class PackageLoader(
                     )
                   },
                 )
-              } catch (e: Exception) {
+              } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                 Logger.error("Failed to get display name for ${app.packageID}: ${e.message}")
               }
             }
@@ -183,7 +185,7 @@ class PackageLoader(
         },
         ifFailure = { error -> Logger.error("Error getting all applications: ${error.message}") },
       )
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Error updating display names: ${e.message}")
     }
   }
@@ -208,7 +210,7 @@ class PackageLoader(
                 applicationUseCases.updateApplication.execute(
                   app.copy(usesGooglePlayServices = correctedGmsStatus),
                 )
-              } catch (e: Exception) {
+              } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                 Logger.error("Failed to update GMS status for ${app.packageID}: ${e.message}")
               }
             }
@@ -220,7 +222,7 @@ class PackageLoader(
           Logger.error("Error getting all applications for GMS update: ${error.message}")
         },
       )
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Error updating GMS status: ${e.message}")
     }
   }

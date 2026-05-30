@@ -33,7 +33,9 @@ class GetIps
       try {
         val ips = networkFilterRepository.getAllIps()
         Result.Success(ips)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(Error.ServerError("Error while getting ips"))
+      } catch (e: IllegalArgumentException) {
         Result.Failure(Error.ServerError(e.message ?: "Error while getting ips"))
       }
   }

@@ -60,6 +60,7 @@ import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
 @AndroidEntryPoint
+@Suppress("TooManyFunctions")
 class RootConnectionService :
   Service(),
   CoroutineScope by CoroutineScope(Dispatchers.IO),
@@ -228,14 +229,14 @@ class RootConnectionService :
     }
   }
 
-  override fun updateScreen(value: Boolean) {}
+  override fun updateScreen(value: Boolean) = Unit
 
   override suspend fun updateDomains(progressCallback: (suspend (Int) -> Unit)?) {
     Logger.info("RootConnectionService: updateDomains() called - reloading domains")
     loadAndApplyDomains()
   }
 
-  override fun updateHttpSettings() {}
+  override fun updateHttpSettings() = Unit
 
   override fun setDnsBlocking(enabled: Boolean) {
     firewallRulesHandler.setDnsBlocking(enabled)
@@ -355,7 +356,7 @@ class RootConnectionService :
         Logger.info(
           "RootConnectionService: Successfully applied ${domains!!.size} domains to system hosts file",
         )
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error(
           "RootConnectionService: Failed to apply domains to hosts file: ${e.message}",
           e,
@@ -625,7 +626,7 @@ class RootConnectionService :
 
         // Small delay to make progress visible
         Thread.sleep(10)
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("RootConnectionService: Failed to execute command: $command", e)
       }
     }

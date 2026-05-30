@@ -42,7 +42,10 @@ data class Configuration(
       val config =
         try {
           json.decodeFromStream<Configuration>(inputStream)
-        } catch (e: Exception) {
+        } catch (e: kotlinx.serialization.SerializationException) {
+          Logger.error("Failed to decode config!", e)
+          loadBackup()
+        } catch (e: java.io.IOException) {
           Logger.error("Failed to decode config!", e)
           loadBackup()
         }
@@ -56,7 +59,8 @@ data class Configuration(
       return load(inputStream)
     }
 
-    private fun loadBackup(name: String = "$DEFAULT_CONFIG_FILENAME$CONFIG_BACKUP_EXTENSION"): Configuration = load(name)
+    private fun loadBackup(name: String = "$DEFAULT_CONFIG_FILENAME$CONFIG_BACKUP_EXTENSION"): Configuration =
+      load(name)
   }
 
   fun addURL(
@@ -85,7 +89,9 @@ data class Configuration(
   fun save(writer: OutputStream) {
     try {
       json.encodeToStream(this, writer)
-    } catch (e: Exception) {
+    } catch (e: kotlinx.serialization.SerializationException) {
+      Logger.error("Failed to write config to disk!", e)
+    } catch (e: java.io.IOException) {
       Logger.error("Failed to write config to disk!", e)
     }
   }
@@ -118,7 +124,8 @@ data class HostFile(
       }
     }
 
-    override fun create(parcel: Parcel): HostFile = HostFile(parcel.readString() ?: "", parcel.readString() ?: "", parcel.readInt().toHostState())
+    override fun create(parcel: Parcel): HostFile =
+      HostFile(parcel.readString() ?: "", parcel.readString() ?: "", parcel.readInt().toHostState())
   }
 }
 

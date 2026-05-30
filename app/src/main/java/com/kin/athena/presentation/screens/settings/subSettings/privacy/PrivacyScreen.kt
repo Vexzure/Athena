@@ -126,7 +126,16 @@ fun PrivacyScreen(
                   }
                 }
             }
-          } catch (e: Exception) {
+          } catch (e: java.io.IOException) {
+            withContext(Dispatchers.Main) {
+              Toast
+                .makeText(
+                  context,
+                  context.getString(R.string.backup_export_failed, e.message),
+                  Toast.LENGTH_LONG,
+                ).show()
+            }
+          } catch (e: SecurityException) {
             withContext(Dispatchers.Main) {
               Toast
                 .makeText(
@@ -175,7 +184,16 @@ fun PrivacyScreen(
                   }
                 }
             }
-          } catch (e: Exception) {
+          } catch (e: java.io.IOException) {
+            withContext(Dispatchers.Main) {
+              Toast
+                .makeText(
+                  context,
+                  context.getString(R.string.backup_import_failed, e.message),
+                  Toast.LENGTH_LONG,
+                ).show()
+            }
+          } catch (e: kotlinx.serialization.SerializationException) {
             withContext(Dispatchers.Main) {
               Toast
                 .makeText(

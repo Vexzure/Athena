@@ -32,7 +32,11 @@ class DeleteApplication
       try {
         packageRepository.deleteApplication(application)
         Result.Success(Unit)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(
+          Error.PackageError("Error while deleting package ${application.packageID}"),
+        )
+      } catch (e: IllegalArgumentException) {
         Result.Failure(
           Error.PackageError(e.message ?: "Error while deleting package ${application.packageID}"),
         )

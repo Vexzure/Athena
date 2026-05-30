@@ -367,16 +367,17 @@ class LogsViewModel
       lowerQuery: String,
     ): Boolean {
       // Check simple string fields first (fastest)
-      if (
+      val matchesIPOrPort =
         log.destinationIP.contains(lowerQuery, ignoreCase = true) ||
         log.sourceIP.contains(lowerQuery, ignoreCase = true) ||
         log.sourcePort.contains(lowerQuery, ignoreCase = true) ||
-        log.destinationPort.contains(lowerQuery, ignoreCase = true) ||
+        log.destinationPort.contains(lowerQuery, ignoreCase = true)
+
+      val matchesProtocolOrStatus =
         log.protocol.lowercase().contains(lowerQuery) ||
-        log.packetStatus.name
-          .lowercase()
-          .contains(lowerQuery)
-      ) {
+        log.packetStatus.name.lowercase().contains(lowerQuery)
+
+      if (matchesIPOrPort || matchesProtocolOrStatus) {
         return true
       }
 

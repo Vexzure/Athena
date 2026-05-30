@@ -33,7 +33,9 @@ class GetLogs
       try {
         val log = logRepository.getAllLogs()
         Result.Success(log)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(Error.ServerError("Error while obtaining logs"))
+      } catch (e: IllegalArgumentException) {
         Result.Failure(Error.ServerError(e.message ?: "Error while obtaining logs"))
       }
   }

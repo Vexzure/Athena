@@ -94,7 +94,9 @@ class IpViewModel
                 }
               },
             )
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
+          Logger.error("Failed to load blocked IPs: ${e.message}", e)
+        } catch (e: IllegalArgumentException) {
           Logger.error("Failed to load blocked IPs: ${e.message}", e)
         }
       }

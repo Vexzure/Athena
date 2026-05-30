@@ -50,6 +50,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
+@Suppress("TooManyFunctions")
 class HomeViewModel
   @Inject
   constructor(
@@ -339,7 +340,7 @@ class HomeViewModel
                 ApplicationListState.Error(result.error.message ?: "Failed to load applications")
             }
           }
-        } catch (e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
           _applicationState.value =
             ApplicationListState.Error(e.message ?: "Unknown error occurred")
         }
@@ -347,7 +348,7 @@ class HomeViewModel
     }
 
     // Removed pagination - no longer needed
-    fun loadMoreApplications(settingsViewModel: SettingsViewModel) {
+    fun loadMoreApplications(@Suppress("UnusedParameter") settingsViewModel: SettingsViewModel) {
       // No-op - pagination removed
     }
 
@@ -522,7 +523,7 @@ class HomeViewModel
                         context,
                       )
                     application.packageID to icon
-                  } catch (e: Exception) {
+                  } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                     Logger.error(
                       "Failed to load icon for ${application.packageID}: ${e.message}",
                       e,
@@ -556,7 +557,7 @@ class HomeViewModel
                           context,
                         )
                       application.packageID to icon
-                    } catch (e: Exception) {
+                    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                       Logger.error(
                         "Failed to load icon for ${application.packageID}: ${e.message}",
                         e,
@@ -599,7 +600,7 @@ class HomeViewModel
                     )
                   },
                 )
-              } catch (e: Exception) {
+              } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
                 Logger.error("Error handling app uninstall for $it: ${e.message}")
               }
             }

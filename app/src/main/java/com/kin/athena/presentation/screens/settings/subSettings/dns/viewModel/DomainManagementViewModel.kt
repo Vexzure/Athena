@@ -91,7 +91,9 @@ class DomainManagementViewModel
         try {
           _allowlistCount.value = customDomainRepository.getAllowlistCount()
           _blocklistCount.value = customDomainRepository.getBlocklistCount()
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
+          Logger.error("Failed to load domain counts: ${e.message}", e)
+        } catch (e: IllegalArgumentException) {
           Logger.error("Failed to load domain counts: ${e.message}", e)
         }
       }
@@ -144,7 +146,10 @@ class DomainManagementViewModel
           Logger.info(
             "Added domain: $cleanDomain to ${if (isAllowlist) "allowlist" else "blocklist"}",
           )
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
+          Logger.error("Failed to add domain: ${e.message}", e)
+          _errorMessage.value = "Failed to add domain: ${e.message}"
+        } catch (e: IllegalArgumentException) {
           Logger.error("Failed to add domain: ${e.message}", e)
           _errorMessage.value = "Failed to add domain: ${e.message}"
         }
@@ -160,7 +165,10 @@ class DomainManagementViewModel
             "Removed domain: ${domain.domain} from " +
               "${if (domain.isAllowlist) "allowlist" else "blocklist"}",
           )
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
+          Logger.error("Failed to remove domain: ${e.message}", e)
+          _errorMessage.value = "Failed to remove domain: ${e.message}"
+        } catch (e: IllegalArgumentException) {
           Logger.error("Failed to remove domain: ${e.message}", e)
           _errorMessage.value = "Failed to remove domain: ${e.message}"
         }
@@ -172,7 +180,10 @@ class DomainManagementViewModel
         try {
           customDomainRepository.updateDomainEnabled(domain.id, !domain.isEnabled)
           Logger.info("Toggled domain enabled state: ${domain.domain}")
-        } catch (e: Exception) {
+        } catch (e: IllegalStateException) {
+          Logger.error("Failed to toggle domain enabled state: ${e.message}", e)
+          _errorMessage.value = "Failed to update domain: ${e.message}"
+        } catch (e: IllegalArgumentException) {
           Logger.error("Failed to toggle domain enabled state: ${e.message}", e)
           _errorMessage.value = "Failed to update domain: ${e.message}"
         }
@@ -203,7 +214,7 @@ class DomainManagementViewModel
             Regex(domain)
             Logger.info("VALIDATION SUCCESS: Regex validation successful for: '$domain'")
             ValidationResult.Success
-          } catch (e: Exception) {
+          } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
             Logger.warn("VALIDATION FAILED: Regex validation failed for: '$domain' - ${e.message}")
             ValidationResult.Error("Invalid regex pattern: ${e.message}")
           }
@@ -288,7 +299,7 @@ class DomainManagementViewModel
 
         Logger.info("Domain extraction: '$input' -> '$domain'")
         domain
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Error extracting domain from: '$input'", e)
         input.trim().lowercase() // Return original if extraction fails
       }
@@ -300,7 +311,7 @@ class DomainManagementViewModel
           customDomainRepository.deleteAllDomainsByType(isAllowlist)
           loadCounts()
           Logger.info("Deleted all ${if (isAllowlist) "allowlist" else "blocklist"} domains")
-        } catch (e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
           Logger.error("Failed to delete all domains: ${e.message}", e)
           _errorMessage.value = "Failed to delete domains: ${e.message}"
         }

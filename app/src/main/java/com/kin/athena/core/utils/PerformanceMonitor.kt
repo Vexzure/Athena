@@ -18,6 +18,7 @@
 package com.kin.athena.core.utils
 
 import android.util.Log
+import java.util.Locale
 
 /**
  * Utility object for monitoring performance of statistics calculations and other operations. Used
@@ -45,7 +46,7 @@ object PerformanceMonitor {
     val endTime = System.nanoTime()
     val durationMs = (endTime - startTime) / 1_000_000.0
 
-    Log.d(TAG, "$operationName took ${String.format("%.2f", durationMs)}ms")
+    Log.d(TAG, "$operationName took ${String.format(java.util.Locale.US, "%.2f", durationMs)}ms")
 
     return result
   }
@@ -87,6 +88,7 @@ object PerformanceMonitor {
     Log.d(
       TAG,
       "$cacheName cache - Hits: $hits, Misses: $misses, Hit rate: ${String.format(
+        Locale.US,
         "%.1f",
         hitRate,
       )}%",

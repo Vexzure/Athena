@@ -32,7 +32,9 @@ class AddIp
       try {
         networkFilterRepository.insertIp(ip)
         Result.Success(Unit)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(Error.ServerError("Error while adding ip $ip"))
+      } catch (e: IllegalArgumentException) {
         Result.Failure(Error.ServerError(e.message ?: "Error while adding ip $ip"))
       }
   }

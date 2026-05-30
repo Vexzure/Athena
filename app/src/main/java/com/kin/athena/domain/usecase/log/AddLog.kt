@@ -32,7 +32,9 @@ class AddLog
       try {
         logRepository.insertLog(log)
         Result.Success(Unit)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(Error.ServerError("Error while adding log $log"))
+      } catch (e: IllegalArgumentException) {
         Result.Failure(Error.ServerError(e.message ?: "Error while adding log $log"))
       }
   }

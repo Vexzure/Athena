@@ -146,7 +146,7 @@ class SettingsViewModel
       return if (numericPrice != null) {
         val originalPrice = numericPrice * 1.2 // 20% higher
         val currencySymbol = currentPrice.replace(Regex("[\\d.]"), "")
-        String.format("%.2f", originalPrice).let { currencySymbol + it }
+        String.format(java.util.Locale.US, "%.2f", originalPrice).let { currencySymbol + it }
       } else {
         currentPrice
       }
@@ -269,7 +269,7 @@ class SettingsViewModel
           // Don't log cancellation as error - it's expected behavior
           Logger.debug("Settings update cancelled")
           throw e // Re-throw to properly cancel the coroutine
-        } catch (e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
           Logger.error("Error updating settings: ${e.message}", e)
         }
       }
@@ -281,21 +281,20 @@ class SettingsViewModel
           context.packageManager.getPackageInfo(context.packageName, PackageManager.GET_SIGNATURES)
         val signatures = packageInfo.signatures
 
-        if (signatures != null) {
-          for (signature in signatures) {
-            val cert = signature.toByteArray()
-            val md = MessageDigest.getInstance("SHA-256")
-            val digest = md.digest(cert)
-            val hexString = digest.joinToString("") { "%02x".format(it) }
-            return hexString
-          }
+        if (signatures != null && signatures.isNotEmpty()) {
+          val signature = signatures.first()
+          val cert = signature.toByteArray()
+          val md = MessageDigest.getInstance("SHA-256")
+          val digest = md.digest(cert)
+          val hexString = digest.joinToString("") { "%02x".format(java.util.Locale.US, it) }
+          return hexString
         }
         null
       } catch (e: PackageManager.NameNotFoundException) {
-        e.printStackTrace()
+        Logger.error("Package not found: ${e.message}", e)
         null
       } catch (e: NoSuchAlgorithmException) {
-        e.printStackTrace()
+        Logger.error("Algorithm not found: ${e.message}", e)
         null
       }
     }
@@ -325,17 +324,20 @@ class SettingsViewModel
           xpp.next()
         }
       } catch (e: XmlPullParserException) {
-        e.printStackTrace()
+        Logger.error("XML parsing error: ${e.message}", e)
       } catch (e: IOException) {
-        e.printStackTrace()
+        Logger.error("IO error reading locales: ${e.message}", e)
       }
 
       return LocaleListCompat.forLanguageTags(tagsList.joinToString(","))
     }
 
-    suspend fun isPremiumFeatureEnabled(featureKey: String): Boolean = settings.value.premiumUnlocked
+    suspend fun isPremiumFeatureEnabled(
+      @Suppress("UnusedParameter") featureKey: String
+    ): Boolean = settings.value.premiumUnlocked
 
     suspend fun validatePremiumStatus(): Boolean = settings.value.premiumUnlocked
 
-    fun isProductOwned(productId: String): Boolean = billingProvider.getBillingInterface()?.isProductOwned(productId) ?: false
+    fun isProductOwned(productId: String): Boolean =
+      billingProvider.getBillingInterface()?.isProductOwned(productId) ?: false
   }

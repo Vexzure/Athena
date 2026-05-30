@@ -17,6 +17,7 @@
 
 package com.kin.athena.data.remote
 
+import com.google.gson.annotations.SerializedName
 import com.kin.athena.core.logging.Logger
 import com.kin.athena.core.utils.Error
 import com.kin.athena.core.utils.Result
@@ -64,7 +65,7 @@ data class LicenseResponse(
 data class LicenseData(
   val type: String,
   val status: String,
-  val expires_at: String?,
+  @SerializedName("expires_at") val expiresAt: String?,
   val activations: ActivationData,
 )
 
@@ -104,7 +105,7 @@ class LicenseRepositoryImpl
           valid = false,
           license = null,
         )
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Unexpected error verifying license: ${e.message}")
         LicenseResponse(
           success = false,
@@ -126,7 +127,7 @@ class PriceRepositoryImpl
     ): PriceResponse =
       try {
         api.getPrice(currency = currency, product = product)
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Error fetching price: ${e.message}")
         // Return fallback price based on product
         val fallbackAmount = if (product == "premium") 499 else 200
@@ -172,7 +173,8 @@ object NetworkModule {
 
   @Provides
   @Singleton
-  fun provideVerifyLicenseUseCase(repository: LicenseRepository): VerifyLicenseUseCase = VerifyLicenseUseCase(repository)
+  fun provideVerifyLicenseUseCase(repository: LicenseRepository): VerifyLicenseUseCase =
+    VerifyLicenseUseCase(repository)
 
   @Provides
   @Singleton
@@ -215,7 +217,7 @@ class VerifyLicenseUseCase
     suspend operator fun invoke(key: String): Result<LicenseResponse, Error> =
       try {
         Result.Success(repository.verifyLicense(key))
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Result.Failure(Error.ServerError(e.message ?: "Error while verifying license"))
       }
   }
@@ -231,7 +233,7 @@ class GetPriceUseCase
     ): Result<PriceResponse, Error> =
       try {
         Result.Success(repository.getPrice(currency = currency, product = product))
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Result.Failure(Error.ServerError(e.message ?: "Error fetching price"))
       }
   }

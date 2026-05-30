@@ -48,7 +48,8 @@ object ApplicationModule {
 
   @Provides
   @Singleton
-  fun provideApplicationRepository(provider: DatabaseProvider): ApplicationRepository = ApplicationRepositoryImpl(provider)
+  fun provideApplicationRepository(provider: DatabaseProvider): ApplicationRepository =
+    ApplicationRepositoryImpl(provider)
 
   @Provides
   @Singleton

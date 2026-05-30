@@ -41,7 +41,7 @@ class HTTPRule
       updateHTTPStatus()
     }
 
-    fun updateHTTPStatus(enabled: Boolean? = null) {
+    fun updateHTTPStatus(@Suppress("UnusedParameter") enabled: Boolean? = null) {
       externalScope.launch(Dispatchers.IO) {
         preferencesUseCases.loadSettings
           .execute()

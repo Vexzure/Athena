@@ -46,13 +46,17 @@ class ApplicationRepositoryImpl
       provider.applicationDao().delete(application)
     }
 
-    override suspend fun getApplicationByID(packageId: String): Application? = provider.applicationDao().getApplicationByID(packageId)
+    override suspend fun getApplicationByID(packageId: String): Application? =
+      provider.applicationDao().getApplicationByID(packageId)
 
-    override fun observeApplicationByID(packageId: String): Flow<Application?> = provider.applicationDao().observeApplicationByID(packageId)
+    override fun observeApplicationByID(packageId: String): Flow<Application?> =
+      provider.applicationDao().observeApplicationByID(packageId)
 
-    override suspend fun isPackageIdExists(packageId: String): Boolean = provider.applicationDao().isPackageIdExists(packageId)
+    override suspend fun isPackageIdExists(packageId: String): Boolean =
+      provider.applicationDao().isPackageIdExists(packageId)
 
-    override suspend fun getExistingPackageIds(packageIds: List<String>): List<String> = provider.applicationDao().getExistingPackageIds(packageIds)
+    override suspend fun getExistingPackageIds(packageIds: List<String>): List<String> =
+      provider.applicationDao().getExistingPackageIds(packageIds)
 
     override suspend fun getFilteredApplications(
       showSystemPackages: Boolean,

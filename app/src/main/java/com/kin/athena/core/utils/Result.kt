@@ -44,7 +44,7 @@ sealed class Result<out T, out E> {
       } else {
         Logger.error(error.toString())
       }
-      throw RuntimeException("Unhandled Result Failure: $error")
+      throw IllegalStateException("Unhandled Result Failure: $error")
     }
   }
 }

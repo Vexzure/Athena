@@ -37,7 +37,7 @@ object NetworkSpeedManager {
       } else {
         Logger.info("NetworkSpeedMonitorService is already running")
       }
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Failed to start NetworkSpeedMonitorService: ${e.message}", e)
     }
   }
@@ -54,7 +54,7 @@ object NetworkSpeedManager {
       } else {
         Logger.info("NetworkSpeedMonitorService is not running")
       }
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Failed to stop NetworkSpeedMonitorService: ${e.message}", e)
     }
   }
@@ -66,7 +66,7 @@ object NetworkSpeedManager {
       runningServices.any { service ->
         service.service.className == NetworkSpeedMonitorService::class.java.name
       }
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Failed to check if NetworkSpeedMonitorService is running: ${e.message}", e)
       false
     }

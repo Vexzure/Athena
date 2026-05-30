@@ -5,7 +5,7 @@ import java.nio.ByteBuffer
 
 fun soarResponse(
   clientPacketData: ByteBuffer,
-  ipHeader: IPv4,
+  @Suppress("UnusedParameter") ipHeader: IPv4,
 ): ByteArray {
   val udpHeader = clientPacketData.toUDPHeader()
   val udpData = ByteBuffer.wrap(udpHeader.extractUDPData(clientPacketData))

@@ -61,7 +61,7 @@ class App :
       val defaultInterval = 15 * 60 * 1000L // 15 minutes
       val defaultEnabled = true // Default to enabled
       AutoUpdateManager.initializeAutoUpdate(this, defaultEnabled, defaultInterval)
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       // Silently handle initialization errors
     }
   }

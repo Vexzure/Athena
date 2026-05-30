@@ -32,7 +32,11 @@ class UpdateApplication
       try {
         packageRepository.updateApplication(application)
         Result.Success(Unit)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(
+          Error.ServerError("Error while updating package ${application.packageID}"),
+        )
+      } catch (e: IllegalArgumentException) {
         Result.Failure(
           Error.ServerError(e.message ?: "Error while updating package ${application.packageID}"),
         )

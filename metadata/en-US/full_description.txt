@@ -104,7 +104,6 @@ Take full control of your DNS for privacy and speed.
 
 🛡️ PRIVACY & OPEN SOURCE
 
-
 - 100% open-source (GPL)
 - No data collection
 - No analytics or tracking

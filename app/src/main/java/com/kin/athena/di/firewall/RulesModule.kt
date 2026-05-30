@@ -73,7 +73,7 @@ object RulesModule {
   @Provides
   @Singleton
   fun provideNetworkChangeReceiver(
-    @ApplicationContext context: Context,
+    @Suppress("UnusedParameter") @ApplicationContext context: Context,
     networkManager: NetworkManager,
     connectionStateManager: ConnectionStateManager,
   ): NetworkChangeReceiver =
@@ -143,17 +143,19 @@ object RulesModule {
 
   @Provides
   @Singleton
-  fun provideCustomDomainRule(customDomainRepository: CustomDomainRepository): CustomDomainRule = CustomDomainRule(customDomainRepository)
+  fun provideCustomDomainRule(customDomainRepository: CustomDomainRepository): CustomDomainRule =
+    CustomDomainRule(customDomainRepository)
 
   @Provides
   @Singleton
+  @Suppress("LongParameterList")
   fun provideRuleManager(
     appRule: AppRule,
     filterRule: FilterRule,
     logRule: LogRule,
     httpRule: HTTPRule,
     screenRule: ScreenRule,
-    DNSRule: DNSRule,
+    dnsRule: DNSRule,
     customDomainRule: CustomDomainRule,
     logUseCases: LogUseCases,
     preferencesUseCases: PreferencesUseCases,
@@ -161,7 +163,7 @@ object RulesModule {
     @ApplicationContext context: Context,
   ): RuleHandler =
     RuleHandler(
-      listOf(appRule, DNSRule, customDomainRule, filterRule, screenRule, httpRule, logRule),
+      listOf(appRule, dnsRule, customDomainRule, filterRule, screenRule, httpRule, logRule),
       logUseCases,
       preferencesUseCases,
       networkChangeReceiver,

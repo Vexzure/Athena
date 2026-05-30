@@ -48,7 +48,7 @@ object AutoUpdateManager {
       ) {
         return
       }
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       // Proceed with scheduling if check fails
     }
 

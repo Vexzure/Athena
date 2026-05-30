@@ -103,7 +103,8 @@ class RuleHandler
       }
     }
 
-    fun isDnsBlockingEnabled(): Boolean = rules.filterIsInstance<DNSRule>().firstOrNull()?.isDnsBlockingEnabled() ?: false
+    fun isDnsBlockingEnabled(): Boolean =
+      rules.filterIsInstance<DNSRule>().firstOrNull()?.isDnsBlockingEnabled() ?: false
 
     fun setCustomDomainRules(enabled: Boolean) {
       rules.filterIsInstance<CustomDomainRule>().forEach { customDomainRule ->

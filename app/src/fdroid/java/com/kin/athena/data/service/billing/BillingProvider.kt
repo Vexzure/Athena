@@ -40,5 +40,6 @@ class BillingProvider
 
     fun getBillingInterface(): BillingInterface? = currentBillingInterface
 
-    private fun createBillingInterface(activity: Activity): BillingInterface = FDroidBillingManager(activity, getPriceUseCase)
+    private fun createBillingInterface(activity: Activity): BillingInterface =
+      FDroidBillingManager(activity, getPriceUseCase)
   }

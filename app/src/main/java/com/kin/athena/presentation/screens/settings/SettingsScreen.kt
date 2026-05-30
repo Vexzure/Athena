@@ -51,7 +51,6 @@ fun SettingsScreen(
   ) {
     if (!settings.settings.value.premiumUnlocked) {
       item {
-        val context = LocalContext.current
         val currentPrice = settings.getProductPrice("all_features")
         val originalPrice = settings.calculateOriginalPrice(currentPrice)
         val discountText = settings.getDiscountText()

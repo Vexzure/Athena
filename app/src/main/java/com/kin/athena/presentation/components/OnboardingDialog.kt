@@ -144,7 +144,7 @@ fun OnboardingOverlay(
 private fun TutorialDialog(
   cutoutCenter: Offset,
   cutoutRadius: Float,
-  onDismiss: () -> Unit,
+  @Suppress("UnusedParameter") onDismiss: () -> Unit,
 ) {
   val density = LocalDensity.current
 

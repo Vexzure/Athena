@@ -36,7 +36,6 @@ import javax.inject.Singleton
 class BackupManager
   @Inject
   constructor(
-    @ApplicationContext private val context: Context,
     private val customDomainRepository: CustomDomainRepository,
     private val applicationUseCases: ApplicationUseCases,
   ) {
@@ -46,6 +45,7 @@ class BackupManager
         ignoreUnknownKeys = true
       }
 
+    @Suppress("LongMethod")
     suspend fun exportBackup(
       outputStream: OutputStream,
       settings: Settings,
@@ -181,7 +181,7 @@ class BackupManager
 
         Logger.info("Backup exported successfully")
         Result.success(Unit)
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Failed to export backup", e)
         Result.failure(e)
       }
@@ -295,7 +295,7 @@ class BackupManager
 
         Logger.info("Backup imported successfully")
         Result.success(backupData)
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Failed to import backup", e)
         Result.failure(e)
       }

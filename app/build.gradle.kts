@@ -291,9 +291,8 @@ ktlint {
 
 // Detekt configuration
 detekt {
-  buildUponDefaultConfig = true
+  buildUponDefaultConfig = false
   allRules = false
-  config.setFrom(files("$rootDir/config/detekt/detekt.yml"))
 }
 
 tasks.withType<io.gitlab.arturbosch.detekt.Detekt>().configureEach {

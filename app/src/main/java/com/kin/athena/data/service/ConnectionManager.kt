@@ -70,7 +70,7 @@ class ConnectionStateManager
         // Use regular startService for session clearing since it's a quick operation
         // that doesn't require foreground service capabilities
         context.startService(clearSessionsServiceIntent)
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Failed to start VPN service for session clearing: ${e.message}", e)
       }
     }

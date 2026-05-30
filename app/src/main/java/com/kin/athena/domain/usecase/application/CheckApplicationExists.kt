@@ -31,7 +31,11 @@ class CheckApplicationExists
       try {
         val exists = applicationRepository.isPackageIdExists(packageId)
         Result.Success(exists)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(
+          Error.ServerError("Error while checking package existence for $packageId"),
+        )
+      } catch (e: IllegalArgumentException) {
         Result.Failure(
           Error.ServerError(e.message ?: "Error while checking package existence for $packageId"),
         )

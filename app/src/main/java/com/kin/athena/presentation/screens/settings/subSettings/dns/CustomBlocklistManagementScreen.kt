@@ -100,7 +100,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun CustomBlocklistManagementScreen(
   navController: NavController,
-  settings: SettingsViewModel,
+  @Suppress("UnusedParameter") settings: SettingsViewModel,
   blockListViewModel: BlockListViewModel = hiltViewModel(),
   customBlocklistViewModel: CustomBlocklistViewModel = hiltViewModel(),
 ) {
@@ -224,7 +224,7 @@ fun CustomBlocklistManagementScreen(
           // Trigger recomposition by updating the refresh trigger on the Main thread
           CoroutineScope(Dispatchers.Main).launch { refreshTrigger++ }
         }
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Failed to update custom blocklist '$list': ${e.message}", e)
         CoroutineScope(Dispatchers.Main).launch {
           if (enabled) {

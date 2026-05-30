@@ -29,6 +29,7 @@ import rikka.shizuku.Shizuku
 import javax.inject.Inject
 
 @AndroidEntryPoint
+@Suppress("TooManyFunctions")
 class ShizukuConnectionService :
   Service(),
   CoroutineScope by CoroutineScope(Dispatchers.IO),
@@ -191,7 +192,11 @@ class ShizukuConnectionService :
     try {
       Shizuku.bindUserService(serviceArgs, connection)
       Logger.debug("ShizukuConnectionService: binding user service")
-    } catch (e: Exception) {
+    } catch (e: android.os.RemoteException) {
+      Logger.error("ShizukuConnectionService: failed to bind user service: ${e.message}")
+    } catch (e: IllegalStateException) {
+      Logger.error("ShizukuConnectionService: failed to bind user service: ${e.message}")
+    } catch (e: SecurityException) {
       Logger.error("ShizukuConnectionService: failed to bind user service: ${e.message}")
     }
   }
@@ -201,7 +206,9 @@ class ShizukuConnectionService :
       try {
         Shizuku.unbindUserService(serviceArgs, connection, true)
         Logger.debug("ShizukuConnectionService: unbound user service")
-      } catch (e: Exception) {
+      } catch (e: android.os.RemoteException) {
+        Logger.error("ShizukuConnectionService: error unbinding: ${e.message}")
+      } catch (e: IllegalStateException) {
         Logger.error("ShizukuConnectionService: error unbinding: ${e.message}")
       } finally {
         isServiceBound = false
@@ -227,7 +234,10 @@ class ShizukuConnectionService :
           Logger.warn("ShizukuConnectionService: enableFirewallChain returned false")
           firewallManager.update(FirewallStatus.OFFLINE) // or error
         }
-      } catch (e: Exception) {
+      } catch (e: android.os.RemoteException) {
+        Logger.error("ShizukuConnectionService: exception enabling firewall chain: ${e.message}")
+        firewallManager.update(FirewallStatus.OFFLINE)
+      } catch (e: IllegalStateException) {
         Logger.error("ShizukuConnectionService: exception enabling firewall chain: ${e.message}")
         firewallManager.update(FirewallStatus.OFFLINE)
       }
@@ -249,7 +259,9 @@ class ShizukuConnectionService :
         } else {
           Logger.warn("ShizukuConnectionService: disableFirewallChain returned false")
         }
-      } catch (e: Exception) {
+      } catch (e: android.os.RemoteException) {
+        Logger.error("ShizukuConnectionService: exception disabling firewall chain: ${e.message}")
+      } catch (e: IllegalStateException) {
         Logger.error("ShizukuConnectionService: exception disabling firewall chain: ${e.message}")
       }
     } else {
@@ -308,7 +320,9 @@ class ShizukuConnectionService :
         try {
           Logger.info("Starting TCP packet logging via Shizuku")
           monitorNetworkConnections("tcp")
-        } catch (e: Exception) {
+        } catch (e: android.os.RemoteException) {
+          Logger.error("TCP packet logging failed: ${e.message}")
+        } catch (e: IllegalStateException) {
           Logger.error("TCP packet logging failed: ${e.message}")
         }
       }
@@ -318,7 +332,9 @@ class ShizukuConnectionService :
         try {
           Logger.info("Starting UDP packet logging via Shizuku")
           monitorNetworkConnections("udp")
-        } catch (e: Exception) {
+        } catch (e: android.os.RemoteException) {
+          Logger.error("UDP packet logging failed: ${e.message}")
+        } catch (e: IllegalStateException) {
           Logger.error("UDP packet logging failed: ${e.message}")
         }
       }
@@ -351,7 +367,10 @@ class ShizukuConnectionService :
           Logger.warn("Empty result from /proc/net/$protocol")
         }
         kotlinx.coroutines.delay(1000)
-      } catch (e: Exception) {
+      } catch (e: android.os.RemoteException) {
+        Logger.error("Error monitoring $protocol connections: ${e.message}")
+        kotlinx.coroutines.delay(5000)
+      } catch (e: java.io.IOException) {
         Logger.error("Error monitoring $protocol connections: ${e.message}")
         kotlinx.coroutines.delay(5000)
       }
@@ -372,7 +391,9 @@ class ShizukuConnectionService :
             parseConnectionLine(line, protocol)
           }
         }
-      } catch (e: Exception) {
+      } catch (e: NumberFormatException) {
+        Logger.error("Error parsing network connections: ${e.message}")
+      } catch (e: IllegalArgumentException) {
         Logger.error("Error parsing network connections: ${e.message}")
       }
     }
@@ -440,7 +461,9 @@ class ShizukuConnectionService :
           }
         }
       }
-    } catch (e: Exception) {
+    } catch (e: NumberFormatException) {
+      Logger.debug("Error parsing connection line: ${e.message}")
+    } catch (e: IllegalArgumentException) {
       Logger.debug("Error parsing connection line: ${e.message}")
     }
   }
@@ -451,7 +474,9 @@ class ShizukuConnectionService :
       val ip = hexToIP(hexIP)
       val port = hexPort.toInt(16).toString()
       return Pair(ip, port)
-    } catch (e: Exception) {
+    } catch (e: NumberFormatException) {
+      return Pair("0.0.0.0", "0")
+    } catch (e: IllegalArgumentException) {
       return Pair("0.0.0.0", "0")
     }
   }
@@ -460,7 +485,9 @@ class ShizukuConnectionService :
     try {
       val bytes = hex.chunked(2).map { it.toInt(16).toByte() }.reversed()
       return bytes.joinToString(".") { (it.toInt() and 0xFF).toString() }
-    } catch (e: Exception) {
+    } catch (e: NumberFormatException) {
+      return "0.0.0.0"
+    } catch (e: IllegalArgumentException) {
       return "0.0.0.0"
     }
   }
@@ -480,7 +507,9 @@ class ShizukuConnectionService :
             "ShizukuConnectionService: setPackageNetworking for ${app.packageID} = $allow failed",
           )
         }
-      } catch (e: Exception) {
+      } catch (e: android.os.RemoteException) {
+        Logger.error("ShizukuConnectionService: exception setting package networking: ${e.message}")
+      } catch (e: IllegalStateException) {
         Logger.error("ShizukuConnectionService: exception setting package networking: ${e.message}")
       }
     } else {

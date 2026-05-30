@@ -334,7 +334,9 @@ fun DnsScreen(
                             lists.forEach { url -> config.removeURL(url) }
                             config.save()
                             Logger.info("Reverted list additions")
-                          } catch (e: Exception) {
+                          } catch (e: java.io.IOException) {
+                            Logger.error("Failed to revert config: ${e.message}", e)
+                          } catch (e: kotlinx.serialization.SerializationException) {
                             Logger.error("Failed to revert config: ${e.message}", e)
                           }
                         }
@@ -366,7 +368,11 @@ fun DnsScreen(
             blockListViewModel.refreshDomains()
           }
           // For enabling, the download happens in updateLists() callback
-        } catch (e: Exception) {
+        } catch (e: java.io.IOException) {
+          Logger.error("Failed to update lists: ${e.message}", e)
+
+          withContext(Dispatchers.Main) {
+        } catch (e: IllegalStateException) {
           Logger.error("Failed to update lists: ${e.message}", e)
 
           withContext(Dispatchers.Main) {

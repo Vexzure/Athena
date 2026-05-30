@@ -53,7 +53,7 @@ object NumberFormatter {
           "${(millions).toInt()}M"
         } else {
           // For 1.0M - 9.9M, show one decimal place
-          String.format("%.1fM", millions).replace(".0M", "M")
+          String.format(java.util.Locale.US, "%.1fM", millions).replace(".0M", "M")
         }
       }
 
@@ -65,7 +65,7 @@ object NumberFormatter {
           "${(thousands).toInt()}K"
         } else {
           // For 1.0K - 9.9K, show one decimal place
-          String.format("%.1fK", thousands).replace(".0K", "K")
+          String.format(java.util.Locale.US, "%.1fK", thousands).replace(".0K", "K")
         }
       }
 
@@ -85,8 +85,8 @@ object NumberFormatter {
     when {
       bytes < 0 -> "0 B"
       bytes < 1024 -> "$bytes B"
-      bytes < 1024 * 1024 -> String.format("%.1f KB", bytes / 1024.0)
-      bytes < 1024 * 1024 * 1024 -> String.format("%.1f MB", bytes / (1024.0 * 1024.0))
-      else -> String.format("%.1f GB", bytes / (1024.0 * 1024.0 * 1024.0))
+      bytes < 1024 * 1024 -> String.format(java.util.Locale.US, "%.1f KB", bytes / 1024.0)
+      bytes < 1024 * 1024 * 1024 -> String.format(java.util.Locale.US, "%.1f MB", bytes / (1024.0 * 1024.0))
+      else -> String.format(java.util.Locale.US, "%.1f GB", bytes / (1024.0 * 1024.0 * 1024.0))
     }.replace(".0 ", " ")
 }

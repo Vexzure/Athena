@@ -46,6 +46,7 @@ import javax.inject.Inject
 import kotlin.coroutines.coroutineContext
 
 @AndroidEntryPoint
+@Suppress("TooManyFunctions")
 class VpnConnectionServer :
   Service(),
   CoroutineScope by MainScope(),
@@ -128,7 +129,8 @@ class VpnConnectionServer :
         Logger.info("Clearing sessions for rule update")
         tunnelManager.clearSessions()
       }
-    } catch (e: Exception) {
+    } catch (_: Exception) {
+      // Intentionally ignored - service cleanup exceptions are non-critical
     }
 
     runBlocking {
@@ -158,7 +160,7 @@ class VpnConnectionServer :
     }
   }
 
-  override fun onAppUninstalled(packageName: String?) {}
+  override fun onAppUninstalled(packageName: String?) = Unit
 
   override fun onBind(intent: Intent): IBinder = VpnConnection()
 
@@ -223,7 +225,7 @@ class VpnConnectionServer :
       } else {
         Logger.warn("TunnelManager not initialized for session clearing")
       }
-    } catch (e: Exception) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       Logger.error("Error clearing sessions: ${e.message}", e)
     }
   }
@@ -283,7 +285,7 @@ class VpnConnectionServer :
     }
   }
 
-  private fun initializeVpnComponents(vpnInterface: ParcelFileDescriptor) {
+  private fun initializeVpnComponents(@Suppress("UnusedParameter") vpnInterface: ParcelFileDescriptor) {
     // Get DNS servers from settings
     val (dnsServerV4, dnsServerV6) =
       runBlocking {
@@ -326,7 +328,7 @@ class VpnConnectionServer :
             Logger.info("Starting Tunnel Manager packet processing")
             tunnelManager.run(vpnFd.fd, forwardDns = true, rcode = 3)
           }
-        } catch (e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
           Logger.error("Tunnel Manager processing error: ${e.message}", e)
         }
       }
@@ -357,7 +359,7 @@ class VpnConnectionServer :
       Thread {
         try {
           stopVpn()
-        } catch (e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
           Logger.error("Error during service cleanup: ${e.message}", e)
         }
       }.start()

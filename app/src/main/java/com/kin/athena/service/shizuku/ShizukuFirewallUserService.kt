@@ -42,7 +42,10 @@ class ShizukuFirewallUserService : IShizukuFirewallService.Stub() {
           !result.contains("Unknown command")
       Logger.info("ShizukuFirewallUserService: enableFirewallChain() result: $success")
       success
-    } catch (e: Exception) {
+    } catch (e: java.io.IOException) {
+      Logger.error("ShizukuFirewallUserService: enableFirewallChain() failed: ${e.message}")
+      false
+    } catch (e: SecurityException) {
       Logger.error("ShizukuFirewallUserService: enableFirewallChain() failed: ${e.message}")
       false
     }
@@ -69,12 +72,16 @@ class ShizukuFirewallUserService : IShizukuFirewallService.Stub() {
           !disableResult.contains("Unknown command")
       Logger.info("ShizukuFirewallUserService: disableFirewallChain() result: $success")
       success
-    } catch (e: Exception) {
+    } catch (e: java.io.IOException) {
+      Logger.error("ShizukuFirewallUserService: disableFirewallChain() failed: ${e.message}")
+      false
+    } catch (e: SecurityException) {
       Logger.error("ShizukuFirewallUserService: disableFirewallChain() failed: ${e.message}")
       false
     }
   }
 
+  @Suppress("NestedBlockDepth")
   private fun unblockAllApps() {
     try {
       Logger.debug("Getting list of all installed packages...")
@@ -106,7 +113,10 @@ class ShizukuFirewallUserService : IShizukuFirewallService.Stub() {
               errorCount++
               Logger.debug("✗ Failed to unblock $packageName: $result")
             }
-          } catch (e: Exception) {
+          } catch (e: java.io.IOException) {
+            errorCount++
+            Logger.debug("✗ Exception unblocking $packageName: ${e.message}")
+          } catch (e: SecurityException) {
             errorCount++
             Logger.debug("✗ Exception unblocking $packageName: ${e.message}")
           }
@@ -116,7 +126,9 @@ class ShizukuFirewallUserService : IShizukuFirewallService.Stub() {
       } else {
         Logger.warn("No packages found to unblock")
       }
-    } catch (e: Exception) {
+    } catch (e: java.io.IOException) {
+      Logger.error("Failed to unblock all apps: ${e.message}")
+    } catch (e: SecurityException) {
       Logger.error("Failed to unblock all apps: ${e.message}")
     }
   }
@@ -133,7 +145,10 @@ class ShizukuFirewallUserService : IShizukuFirewallService.Stub() {
       val enabled = result.contains("true") && !result.contains("Unknown command")
       Logger.debug("ShizukuFirewallUserService: isFirewallChainEnabled() result: $enabled")
       enabled
-    } catch (e: Exception) {
+    } catch (e: java.io.IOException) {
+      Logger.error("ShizukuFirewallUserService: isFirewallChainEnabled() failed: ${e.message}")
+      false
+    } catch (e: SecurityException) {
       Logger.error("ShizukuFirewallUserService: isFirewallChainEnabled() failed: ${e.message}")
       false
     }
@@ -159,7 +174,10 @@ class ShizukuFirewallUserService : IShizukuFirewallService.Stub() {
         "ShizukuFirewallUserService: setPackageNetworking($packageName, $enabled) result: $success",
       )
       success
-    } catch (e: Exception) {
+    } catch (e: java.io.IOException) {
+      Logger.error(
+        "ShizukuFirewallUserService: setPackageNetworking($packageName, $enabled) failed: ${e.message}",
+    } catch (e: SecurityException) {
       Logger.error(
         "ShizukuFirewallUserService: setPackageNetworking($packageName, $enabled) failed: ${e.message}",
       )
@@ -181,7 +199,10 @@ class ShizukuFirewallUserService : IShizukuFirewallService.Stub() {
         "ShizukuFirewallUserService: getPackageNetworking($packageName) result: $enabled",
       )
       enabled
-    } catch (e: Exception) {
+    } catch (e: java.io.IOException) {
+      Logger.error(
+        "ShizukuFirewallUserService: getPackageNetworking($packageName) failed: ${e.message}",
+    } catch (e: SecurityException) {
       Logger.error(
         "ShizukuFirewallUserService: getPackageNetworking($packageName) failed: ${e.message}",
       )
@@ -217,7 +238,10 @@ class ShizukuFirewallUserService : IShizukuFirewallService.Stub() {
       val result = output.toString().trim()
       Logger.debug("ShizukuFirewallUserService: executeCommand result (exit: $exitCode): $result")
       result
-    } catch (e: Exception) {
+    } catch (e: java.io.IOException) {
+      Logger.error("ShizukuFirewallUserService: executeCommand failed: ${e.message}")
+      ""
+    } catch (e: SecurityException) {
       Logger.error("ShizukuFirewallUserService: executeCommand failed: ${e.message}")
       ""
     }

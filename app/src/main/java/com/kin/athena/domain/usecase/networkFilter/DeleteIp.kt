@@ -31,7 +31,9 @@ class DeleteIp
       try {
         networkFilterRepository.deleteIp(ip)
         Result.Success(Unit)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(Error.ServerError("Error while deleting ip $ip"))
+      } catch (e: IllegalArgumentException) {
         Result.Failure(Error.ServerError(e.message ?: "Error while deleting ip $ip"))
       }
   }

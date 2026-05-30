@@ -65,7 +65,9 @@ class ShizukuService
           try {
             shizukuFirewallService?.enableFirewallChain()
             Logger.debug("Firewall chain enabled via Shizuku")
-          } catch (e: Exception) {
+          } catch (e: android.os.RemoteException) {
+            Logger.error("Failed to enable firewall chain: ${e.message}")
+          } catch (e: IllegalStateException) {
             Logger.error("Failed to enable firewall chain: ${e.message}")
           }
         }
@@ -92,7 +94,11 @@ class ShizukuService
         } else {
           Logger.warn("Shizuku service not available")
         }
-      } catch (e: Exception) {
+      } catch (e: android.os.RemoteException) {
+        Logger.error("Failed to check Shizuku availability: ${e.message}")
+        isShizukuAvailable = false
+        isShizukuPermissionGranted = false
+      } catch (e: SecurityException) {
         Logger.error("Failed to check Shizuku availability: ${e.message}")
         isShizukuAvailable = false
         isShizukuPermissionGranted = false
@@ -108,7 +114,9 @@ class ShizukuService
       if (isShizukuAvailable && !isShizukuPermissionGranted) {
         try {
           Shizuku.requestPermission(REQUEST_CODE_SHIZUKU)
-        } catch (e: Exception) {
+        } catch (e: android.os.RemoteException) {
+          Logger.error("Failed to request Shizuku permission: ${e.message}")
+        } catch (e: SecurityException) {
           Logger.error("Failed to request Shizuku permission: ${e.message}")
         }
       }
@@ -132,7 +140,9 @@ class ShizukuService
         } else {
           Logger.error("Shizuku version too old (${Shizuku.getVersion()}), need >= 10")
         }
-      } catch (e: Exception) {
+      } catch (e: android.os.RemoteException) {
+        Logger.error("Failed to bind UserService: ${e.message}")
+      } catch (e: IllegalStateException) {
         Logger.error("Failed to bind UserService: ${e.message}")
       }
     }
@@ -142,7 +152,9 @@ class ShizukuService
         try {
           Shizuku.unbindUserService(serviceArgs, serviceConnection, true)
           Logger.debug("Unbound Shizuku UserService")
-        } catch (e: Exception) {
+        } catch (e: android.os.RemoteException) {
+          Logger.error("Failed to unbind UserService: ${e.message}")
+        } catch (e: IllegalStateException) {
           Logger.error("Failed to unbind UserService: ${e.message}")
         } finally {
           isServiceBound = false
@@ -188,7 +200,9 @@ class ShizukuService
         } catch (e: SecurityException) {
           Logger.error("Security error updating rules for ${app.packageID}: ${e.message}")
           checkShizukuAvailability()
-        } catch (e: Exception) {
+        } catch (e: android.os.RemoteException) {
+          Logger.error("Error updating rules for ${app.packageID}: ${e.message}")
+        } catch (e: IllegalStateException) {
           Logger.error("Error updating rules for ${app.packageID}: ${e.message}")
         }
       } ?: run { Logger.warn("Application is null, cannot update rules") }
@@ -212,7 +226,10 @@ class ShizukuService
           Logger.warn("Command failed: $result")
           false
         }
-      } catch (e: Exception) {
+      } catch (e: android.os.RemoteException) {
+        Logger.error("Error executing connectivity command: $command, Error: ${e.message}")
+        false
+      } catch (e: java.io.IOException) {
         Logger.error("Error executing connectivity command: $command, Error: ${e.message}")
         false
       }
@@ -257,7 +274,7 @@ class ShizukuService
         } else {
           Logger.warn("Failed to disable firewall chain")
         }
-      } catch (e: Exception) {
+      } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
         Logger.error("Error disabling firewall chain: ${e.message}")
       }
 

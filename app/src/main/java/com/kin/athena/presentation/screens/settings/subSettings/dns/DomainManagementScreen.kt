@@ -109,7 +109,7 @@ import kotlinx.coroutines.launch
 @Composable
 fun DomainManagementScreen(
   navController: NavController,
-  settings: SettingsViewModel,
+  @Suppress("UnusedParameter") settings: SettingsViewModel,
   viewModel: DomainManagementViewModel = hiltViewModel(),
 ) {
   val allowlistDomains by viewModel.allowlistDomains.collectAsState()
@@ -350,7 +350,7 @@ fun DomainSection(
 private fun DomainCard(
   domain: CustomDomain,
   onDelete: () -> Unit,
-  onToggleEnabled: () -> Unit,
+  @Suppress("UnusedParameter") onToggleEnabled: () -> Unit,
 ) {
   var showDeleteConfirm by remember { mutableStateOf(false) }
 

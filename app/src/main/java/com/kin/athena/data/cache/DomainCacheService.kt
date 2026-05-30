@@ -69,7 +69,7 @@ class DomainCacheService
           _isInitialized.value = true
           lastInitializationTime = currentTime
           Logger.info("DomainCache: Background initialization completed")
-        } catch (e: Exception) {
+        } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
           Logger.error("DomainCache: Failed to initialize domains", e)
         } finally {
           _isLoading.value = false

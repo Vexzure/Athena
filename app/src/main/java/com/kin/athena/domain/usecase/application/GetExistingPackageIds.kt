@@ -25,5 +25,6 @@ class GetExistingPackageIds
   constructor(
     private val applicationRepository: ApplicationRepository,
   ) {
-    suspend fun execute(packageIds: List<String>): List<String> = applicationRepository.getExistingPackageIds(packageIds)
+    suspend fun execute(packageIds: List<String>): List<String> =
+      applicationRepository.getExistingPackageIds(packageIds)
   }

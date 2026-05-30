@@ -114,7 +114,7 @@ fun Application.getApplicationIcon(
   } catch (e: OutOfMemoryError) {
     Logger.error("Out of memory loading icon for: $packageID")
     null
-  } catch (e: Exception) {
+  } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
     Logger.error("Failed to load icon for $packageID: ${e.message}", e)
     null
   }
@@ -204,8 +204,8 @@ fun Context.uidToApplication(uid: Int): Application? =
     val packageManager = packageManager
     val packages = packageManager.getPackagesForUid(uid)
     Application(packageID = packages?.toList()?.first().toString(), uid = uid, systemApp = false)
-  } catch (e: Exception) {
-    e.printStackTrace()
+  } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
+    Logger.error("Error getting application from UID $uid: ${e.message}", e)
     null
   }
 

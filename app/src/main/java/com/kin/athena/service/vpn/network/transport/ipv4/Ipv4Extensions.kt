@@ -136,7 +136,7 @@ private fun ByteBuffer.validateHeaderLength(headerLengthInWords: Byte) {
 
 private fun ByteBuffer.skipOptionsIfPresent(headerLengthInWords: Byte) {
   if (headerLengthInWords > 5) {
-    for (i in 0 until headerLengthInWords - 5) {
+    repeat(headerLengthInWords - 5) {
       getInt()
     }
   }

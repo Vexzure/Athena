@@ -54,7 +54,7 @@ sealed class FirewallStatus(
         is LOADING -> this.progress
         ONLINE -> 1.0f
       }
-    } catch (e: NullPointerException) {
+    } catch (@Suppress("TooGenericExceptionCaught") e: Exception) {
       return 0f
     }
   }

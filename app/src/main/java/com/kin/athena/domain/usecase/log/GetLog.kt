@@ -32,7 +32,9 @@ class GetLog
       try {
         val log = logRepository.getLogById(id)
         Result.Success(log)
-      } catch (e: Exception) {
+      } catch (ignored: IllegalStateException) {
+        Result.Failure(Error.ServerError("Error while obtaining log $id"))
+      } catch (e: IllegalArgumentException) {
         Result.Failure(Error.ServerError(e.message ?: "Error while obtaining log $id"))
       }
   }
